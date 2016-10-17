@@ -23,16 +23,17 @@
 #include <queue>
 #include <string>
 #include <utility>
-#include <vector>
 
 typedef std::string TStateName;
 typedef std::string TTransitionName;
 typedef std::pair<TStateName, TTransitionName> TTransition;
 
-typedef std::function<void( const TStateName & stateName)> TStateFunction;
-typedef std::function<void( const TStateName & prevState,
-                            const TTransitionName & transition,
-                            const TStateName & nextState)> TTransitionFunction;
+typedef std::function<void( const TStateName &,
+                            const TTransitionName &,
+                            const TStateName &)> TStateFunction;
+typedef std::function<void( const TStateName &,
+                            const TTransitionName &,
+                            const TStateName &)> TTransitionFunction;
 /**
  *
  * @class Statemachine.h
@@ -47,14 +48,14 @@ class Statemachine
 
         /// Returns the name of a default initial state name to use, if one is
         // not specified upon construction.
-        static TStateName GET_DEFAULT_INITIAL_STATE()
+        static const TStateName getDefaultInitialState()
         {
             return TStateName("init");
         }
 
         /// Default constructor.  Will use default initial state.
         Statemachine()
-        : Statemachine(GET_DEFAULT_INITIAL_STATE())
+        : Statemachine(getDefaultInitialState())
         {
         }
 
@@ -70,7 +71,7 @@ class Statemachine
         }
 
         /// Will print out information about the state machine.
-        void print()
+        void print() const
         {
             std::cout << "m_initialState = " << m_initialState << std::endl;
             std::cout << "m_currentState = " << m_currentState << std::endl;
@@ -82,8 +83,8 @@ class Statemachine
 
             for (auto & iter : m_nextStates)
             {
-                std::cout   << "transition: {" << iter.first.first << ", "
-                            << iter.first.second << "} -> " << iter.second
+                std::cout   << "transition: {" << iter.first.first << ", " 
+                            << iter.first.second << "} -> " << iter.second 
                             << std::endl;
             }
         }
@@ -100,7 +101,7 @@ class Statemachine
                             const TStateName & nextState,
                             const TTransitionFunction & func)
         {
-            TTransition trans(prevState, transition);
+            const TTransition trans(prevState, transition);
             m_transitionFunctions[trans] = func;
             m_nextStates[trans] = nextState;
         }
@@ -136,11 +137,11 @@ class Statemachine
             }
 
             // Pick the front of the queue of pending transitions.
-            TTransitionName transition = m_transitionQueue.front();
+            const TTransitionName transition = m_transitionQueue.front();
 
             // The transition consistes of the name of the current state and
             // the name of the transition to the next state.
-            TTransition transitionToFind(m_currentState, transition);
+            const TTransition transitionToFind(m_currentState, transition);
 
             // Return immediately if the transition doesn't exist.
             if (m_transitionFunctions.find(transitionToFind) == m_transitionFunctions.end())
@@ -156,13 +157,13 @@ class Statemachine
 
             // After this transition, the previous state will be what the
             // current state is now.
-            TStateName prevState = m_currentState;
+            const TStateName prevState = m_currentState;
 
             // Grab the next state that the machine will transition to.
-            TStateName nextState = m_nextStates[transitionToFind];
+            const TStateName nextState = m_nextStates[transitionToFind];
 
             // Grab the transition function to call.
-            TTransitionFunction func = m_transitionFunctions[transitionToFind];
+            const TTransitionFunction func = m_transitionFunctions[transitionToFind];
 
             // Call the transition function.
             func(prevState, transition, nextState);
@@ -175,7 +176,7 @@ class Statemachine
             m_transitionQueue.pop();
 
             // Call the current state function
-            m_stateFunctions[m_currentState](m_currentState);
+            m_stateFunctions[m_currentState](prevState, transition, nextState);
 
             return true;
         }
@@ -193,7 +194,7 @@ class Statemachine
     private:
 
         /// The starting state for the state machine.
-        TStateName m_initialState;
+        const TStateName m_initialState;
 
         /// The current state of the state machine.
         TStateName m_currentState;
@@ -213,3 +214,4 @@ class Statemachine
 };
 
 #endif
+
