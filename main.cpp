@@ -1,16 +1,16 @@
 #include "statemachine.h"
 
-void STATE_GREEN(const TStateName & stateName)
+void STATE_GREEN(const TStateName & fromState, const TTransitionName & transition, const TStateName & toState)
 {
     std::cout << "IN STATE GREEN" << std::endl;
 }
 
-void STATE_YELLOW(const TStateName & stateName)
+void STATE_YELLOW(const TStateName & fromState, const TTransitionName & transition, const TStateName & toState)
 {
     std::cout << "IN STATE YELLOW" << std::endl;
 }
 
-void STATE_RED(const TStateName & stateName)
+void STATE_RED(const TStateName & fromState, const TTransitionName & transition, const TStateName & toState)
 {
     std::cout << "IN STATE RED" << std::endl;
 }
@@ -56,3 +56,4 @@ int main(int argc, char * argv[])
 
     return 0;
 }
+
