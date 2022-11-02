@@ -5,7 +5,7 @@
  *
  * @brief State machine design pattern, all in one header file.
  *
- * @author Ryan Antkowiak (antkowiak@gmail.com)
+ * @author Ryan Antkowiak 
  *
  * @note Uses some c++11 language features. Compile with -std=c++11
  *
